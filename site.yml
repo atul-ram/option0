@@ -1,0 +1,57 @@
+---
+
+- name: Step1
+  hosts: Client
+  gather_facts: no
+  remote_user: sshadmin
+  become: true
+  become_user: root
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+  - name: check hosts entry on client
+    lineinfile:
+      destfile: /tmp/testfile
+      line: '{{ item.address }}  {{ item.hostname }}'
+    with_items: '{{MediaServerList}}'
+
+- name: Step2
+  hosts: Media
+  gather_facts: no
+  remote_user: sshadmin
+  become: true
+  become_user: root
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+  - name: check hosts entry on media server
+    lineinfile:
+      destfile: /tmp/mtestfile
+      line: '{{ item.address }}  {{ item.hostname }}'
+    with_items: '{{ClientServer}}'
+
+- name: Step3
+  hosts: Master
+  gather_facts: no
+  remote_user: sshadmin
+  become: true
+  become_user: root
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+  - name: copy script  to /netbackup on media server
+    copy:
+      src: scripts/create_policy.sh
+      dest: /tmp/
+      mode: "0755"
+
+  - name: copy input file to /netbackup on media server
+    copy:
+      src: files/create_input
+      dest: /tmp/
+
+  - name: run script on media server
+    raw: /tmp/create_policy.sh /tmp/create_input

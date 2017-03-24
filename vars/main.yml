@@ -1,0 +1,11 @@
+---
+ ClientServer:
+ - { hostname: Client1, address: 10.0.0.52 }
+ MediaServerList:
+ - { hostname: host1, address: 10.0.0.52 }
+ - { hostname: host2, address: 10.0.0.53 }
+ - { hostname: host3, address: 10.0.0.54 }
+ - { hostname: host4, address: 10.0.0.55 }
+ Do_Entry: yes
+ InputList: 
+ - { file: create_input, script: create_policy.sh }
